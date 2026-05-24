@@ -1,0 +1,19 @@
+# セキュリティ敏感ファイル — 変更時に必ずレビュー必須
+# ISAIが全てのセキュリティ関連ファイルのオーナー
+
+# 認証・セキュリティ
+src/middleware.ts                @ISAI-KENSEI
+src/lib/auth/**                  @ISAI-KENSEI
+src/app/api/auth/**              @ISAI-KENSEI
+
+# Supabase マイグレーション
+supabase/**                      @ISAI-KENSEI
+
+# 環境変数・設定
+.env*                            @ISAI-KENSEI
+next.config.*                    @ISAI-KENSEI
+package.json                     @ISAI-KENSEI
+
+# CI/CD
+.github/**                       @ISAI-KENSEI
+vercel.json                      @ISAI-KENSEI
