@@ -57,7 +57,7 @@ export async function verifyInviteCode(code: string): Promise<InviteCodeResult> 
 
     if (error) {
       console.error("[invite-code] Supabase query error:", error);
-      return { valid: false, error: "サーバーエラーが発生しました" };
+      return { valid: false, error: `サーバーエラー(query: ${error.message})` };
     }
 
     if (!data) {
@@ -79,6 +79,6 @@ export async function verifyInviteCode(code: string): Promise<InviteCodeResult> 
     return { valid: true };
   } catch (e) {
     console.error("[invite-code] unexpected error:", e);
-    return { valid: false, error: "サーバーエラーが発生しました" };
+    return { valid: false, error: `サーバーエラー(catch: ${e instanceof Error ? e.message : String(e)})` };
   }
 }
