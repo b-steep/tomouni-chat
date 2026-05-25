@@ -13,13 +13,18 @@ function getAllowedOrigins(): string[] {
   list.add("http://localhost:3000");
   list.add("http://127.0.0.1:3000");
 
-  // Vercel preview / production
+  // Vercel が現在のデプロイメントに対して自動で吐く URL
   const vercelUrl = process.env.VERCEL_URL;
   if (vercelUrl) list.add(`https://${vercelUrl}`);
+
+  // Vercel の安定 production alias (例: tomouni-chat-peach.vercel.app)
+  const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (productionUrl) list.add(`https://${productionUrl}`);
 
   // 本番カスタムドメイン (設計書 §15.2)
   list.add("https://chat.b-steep.com");
   list.add("https://tomouni-chat.vercel.app");
+  list.add("https://tomouni-chat-peach.vercel.app");
 
   // 追加オリジン (環境変数で渡せる)
   const extra = process.env.ALLOWED_ORIGINS;
