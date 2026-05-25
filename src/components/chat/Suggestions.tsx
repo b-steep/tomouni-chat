@@ -16,18 +16,18 @@ export type SuggestionItem = {
 
 const DEFAULT_SUGGESTIONS: SuggestionItem[] = [
   {
-    id: "self-pr",
-    icon: "💪",
-    label: "自己PRをAIで磨く",
-    prompt: "就活の自己PRをAIで添削・ブラッシュアップするコツを教えて。",
+    id: "es",
+    icon: "📝",
+    label: "ESをAIで添削",
+    prompt: "就活のエントリーシート（ES）をAIで添削・改善するコツを教えて。",
     bg: "orange",
     tilt: -2.2,
   },
   {
-    id: "industry",
-    icon: "🏢",
-    label: "業界研究 × AI活用",
-    prompt: "就活の業界研究をAIで効率よく進める方法を教えて。",
+    id: "interview",
+    icon: "🎤",
+    label: "面接対策 × AI",
+    prompt: "就活の面接対策をAIで練習する方法を教えて。",
     bg: "yellow",
     tilt: 1.8,
   },
