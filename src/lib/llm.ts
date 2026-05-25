@@ -1,14 +1,22 @@
 /**
  * LLM provider 切替
  * dev (LLM_PROVIDER=ollama) → ローカルOllama
- * prod (LLM_PROVIDER=google) → 直接 Google Gemini 2.0 Flash (AI Gateway バイパス)
+ * prod (LLM_PROVIDER=google) → 直接 Google Gemini 2.5 Flash
  *
  * 設計書 §11.2 参照
+ *
+ * モデル選定の経緯:
+ *   - gemini-2.0-flash: 無料枠 limit:0 エラー（APIキーのプロジェクト制限）
+ *   - gemini-1.5-flash: v1beta APIで廃止済み（not found）
+ *   - gemini-2.5-flash: 2026年現在の最新・安定モデル ✅
  */
 import { createOllama } from "ollama-ai-provider-v2";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { gateway } from "@ai-sdk/gateway";
 import type { LanguageModel } from "ai";
+
+/** 環境変数で上書き可能。デフォルトは gemini-2.5-flash */
+const DEFAULT_GOOGLE_MODEL = "gemini-2.5-flash";
 
 export function getModel(): LanguageModel {
   const provider = process.env.LLM_PROVIDER ?? "google";
@@ -20,27 +28,12 @@ export function getModel(): LanguageModel {
     return ollama(process.env.OLLAMA_MODEL ?? "qwen2.5:7b");
   }
 
-  if (provider === "google") {
-    const google = createGoogleGenerativeAI({
-      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-    });
-    return google(process.env.GOOGLE_MODEL ?? "gemini-1.5-flash-latest");
-  }
-
-  // production (gateway): Vercel AI Gateway 経由
-  if (provider === "gateway") {
-    // クレジットカード未登録による Vercel AI Gateway エラーを回避するため直接 Gemini にバイパス接続
-    const google = createGoogleGenerativeAI({
-      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-    });
-    return google(process.env.GOOGLE_MODEL ?? "gemini-1.5-flash-latest");
-  }
-
-  // デフォルトで直接 Gemini に接続
+  // google / gateway / その他すべて → 直接 Gemini API に接続
+  // (Vercel AI Gateway はクレジットカード未登録でブロックされるためバイパス)
   const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   });
-  return google(process.env.GOOGLE_MODEL ?? "gemini-1.5-flash-latest");
+  return google(process.env.GOOGLE_MODEL ?? DEFAULT_GOOGLE_MODEL);
 }
 
 export function getModelLabel(): string {
@@ -48,8 +41,5 @@ export function getModelLabel(): string {
   if (provider === "ollama") {
     return `ollama/${process.env.OLLAMA_MODEL ?? "qwen2.5:7b"}`;
   }
-  if (provider === "google") {
-    return `google/${process.env.GOOGLE_MODEL ?? "gemini-1.5-flash-latest"}`;
-  }
-  return process.env.GATEWAY_MODEL ?? "google/gemini-1.5-flash-latest";
+  return `google/${process.env.GOOGLE_MODEL ?? DEFAULT_GOOGLE_MODEL}`;
 }
