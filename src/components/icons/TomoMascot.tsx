@@ -17,12 +17,12 @@ import { cn } from "@/lib/utils";
 type Variant = "face" | "hero" | "writing";
 type Mood = "default" | "thinking" | "happy" | "sad";
 
-// URLバージョン: 新しい画像に置換した時に必ず更新してキャッシュバイパス
-const V = "?v=20260522g-screenshot-sq";
+// next/image では local image にクエリパラメータを付けると
+// Vercel 上で INVALID_IMAGE_OPTIMIZE_REQUEST エラーになるため除去
 const VARIANT_SOURCES = {
-  face: { src: `/mascots/tomo-avatar.png${V}`, width: 320, height: 320 },
-  hero: { src: `/mascots/tomo-hero.png${V}`, width: 500, height: 659 },
-  writing: { src: `/mascots/tomo-hero.png${V}`, width: 500, height: 659 },
+  face: { src: `/mascots/tomo-avatar.png`, width: 320, height: 320 },
+  hero: { src: `/mascots/tomo-hero.png`, width: 500, height: 659 },
+  writing: { src: `/mascots/tomo-hero.png`, width: 500, height: 659 },
 } as const;
 
 const MOOD_CLASSES: Record<Mood, string> = {
