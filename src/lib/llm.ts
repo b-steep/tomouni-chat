@@ -24,7 +24,7 @@ export function getModel(): LanguageModel {
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     });
-    return google(process.env.GOOGLE_MODEL ?? "gemini-2.0-flash");
+    return google(process.env.GOOGLE_MODEL ?? "gemini-1.5-flash");
   }
 
   // production (gateway): Vercel AI Gateway 経由
@@ -33,14 +33,14 @@ export function getModel(): LanguageModel {
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     });
-    return google(process.env.GOOGLE_MODEL ?? "gemini-2.0-flash");
+    return google(process.env.GOOGLE_MODEL ?? "gemini-1.5-flash");
   }
 
   // デフォルトで直接 Gemini に接続
   const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   });
-  return google(process.env.GOOGLE_MODEL ?? "gemini-2.0-flash");
+  return google(process.env.GOOGLE_MODEL ?? "gemini-1.5-flash");
 }
 
 export function getModelLabel(): string {
@@ -49,7 +49,7 @@ export function getModelLabel(): string {
     return `ollama/${process.env.OLLAMA_MODEL ?? "qwen2.5:7b"}`;
   }
   if (provider === "google") {
-    return `google/${process.env.GOOGLE_MODEL ?? "gemini-2.0-flash"}`;
+    return `google/${process.env.GOOGLE_MODEL ?? "gemini-1.5-flash"}`;
   }
-  return process.env.GATEWAY_MODEL ?? "google/gemini-2.0-flash";
+  return process.env.GATEWAY_MODEL ?? "google/gemini-1.5-flash";
 }
