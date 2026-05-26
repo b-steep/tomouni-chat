@@ -154,7 +154,10 @@ export async function POST(req: Request) {
       system: getSystemPrompt(),
       messages: modelMessages,
       stopWhen: stepCountIs(3),
-      maxOutputTokens: 1024,
+      // 日本語は 1文字 ≒ 1-2 tokens のため 1024 だと 500-800 文字で打ち切られる。
+      // Gemini Flash は output 上限に余裕がありコストも低いため 4096 に引き上げ。
+      // 再発検知のため onFinish で finishReason='length' を必ずログ出力する。
+      maxOutputTokens: 4096,
       temperature: 0.7,
     });
 
@@ -163,7 +166,14 @@ export async function POST(req: Request) {
 
     return result.toUIMessageStreamResponse({
       originalMessages: messages,
-      onFinish: async ({ responseMessage }) => {
+      onFinish: async ({ responseMessage, finishReason }) => {
+        // 出力上限到達は UX を壊すので必ず可視化する (Sentry/console)
+        if (finishReason === "length") {
+          console.warn(
+            `[chat] response truncated by maxOutputTokens. ` +
+              `anonId=${anonId} chatId=${chatId} model=${modelLabel}`,
+          );
+        }
         const admin = createAdminClient();
 
         // ── 履歴保存 ──
